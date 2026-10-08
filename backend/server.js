@@ -38,13 +38,26 @@ app.use(cors({
 app.use(express.json());
 app.use('/uploads', express.static(uploadDir));
 
+app.get('/api/health', (_request, response) => response.json({ ok: true }));
+app.get('/api/health/database', async (_request, response) => {
+    try {
+        await pool.query('SELECT 1');
+        response.json({ ok: true, database: true });
+    } catch (error) {
+        response.status(503).json({
+            ok: false,
+            database: false,
+            message: error instanceof Error ? error.message : 'Database connection failed',
+        });
+    }
+});
+
 const valuesFrom = (body, image) => [String(body.name || '').trim(), String(body.description || '').trim(), Number(body.latitude), Number(body.longitude), Number(body.price), image, ['city', 'beach'].includes(body.locationType) ? body.locationType : 'city'];
 const validate = ([name, description, latitude, longitude, price, image, locationType]) => {
     if (!name || !description || !image || !['city', 'beach'].includes(locationType) || !Number.isFinite(latitude) || latitude < -90 || latitude > 90 || !Number.isFinite(longitude) || longitude < -180 || longitude > 180 || !Number.isFinite(price) || price <= 0) return 'Please provide valid hotel details, location, price, and an image';
     return null;
 };
 
-app.get('/api/health', (_request, response) => response.json({ ok: true }));
 app.get('/api/hotels', async (request, response, next) => {
     try {
         const page = Math.max(1, Number(request.query.page) || 1);
