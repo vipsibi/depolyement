@@ -10,7 +10,7 @@ import { initializeDatabase, pool } from './db.js';
 const app = express();
 const port = Number(globalThis.process.env.PORT || 5000);
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
-const uploadDir = path.join(currentDir, 'uploads');
+const uploadDir = globalThis.process.env.VERCEL ? '/tmp/hotelhub-uploads' : path.join(currentDir, 'uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 const fields = 'id, name, description, latitude, longitude, price, image, location_type AS "locationType", rating, reviews, created_at';
 const allowedOrigins = String(globalThis.process.env.FRONTEND_URLS || 'http://localhost:5173')
@@ -109,4 +109,21 @@ app.use((error, _request, response, next) => {
     void next;
     return response.status(500).json({ message: error.message || 'Server error' });
 });
-initializeDatabase().then(() => app.listen(port, () => console.log(`HotelHub backend running at http://localhost:${port}`))).catch((error) => { console.error(`PostgreSQL connection failed: ${error.message}`); globalThis.process.exitCode = 1; });
+
+export { app };
+
+export async function initializeApp() {
+    await initializeDatabase();
+}
+
+export async function startServer() {
+    await initializeApp();
+    return app.listen(port, () => console.log(`HotelHub backend running at http://localhost:${port}`));
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    startServer().catch((error) => {
+        console.error(`PostgreSQL connection failed: ${error.message}`);
+        globalThis.process.exitCode = 1;
+    });
+}

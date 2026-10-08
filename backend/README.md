@@ -32,3 +32,22 @@ FRONTEND_URLS=https://your-vercel-domain.vercel.app
 ```
 
 `FRONTEND_URLS` may contain multiple comma-separated frontend origins. The database pool uses TLS for Supabase, including when running locally. Keep `DATABASE_URL` server-side and never add it to frontend or `VITE_*` environment variables.
+
+## Deploy this backend to Vercel
+
+Set the Vercel project Root Directory to `backend`. Vercel will use `api/index.js` as the serverless entrypoint. Add these Vercel environment variables:
+
+```env
+NODE_ENV=production
+DB_SSL=true
+DATABASE_URL=your-supabase-postgresql-connection-string
+FRONTEND_URLS=https://your-frontend.vercel.app
+```
+
+The API health endpoint is:
+
+```text
+https://your-backend.vercel.app/api/health
+```
+
+Vercel filesystems are temporary. Uploaded images are written to `/tmp` in the serverless runtime and should be moved to Supabase Storage or another persistent object store for production.
