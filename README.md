@@ -104,6 +104,25 @@ The frontend uses `http://localhost:5000/api` by default. To use a different API
 VITE_API_URL=http://localhost:5000/api
 ```
 
+## Deploy with Vercel and Supabase
+
+Deploy the `frontend` directory as a Vercel project and keep the Express API deployed on a Node-compatible host. In the Vercel project settings, set:
+
+```env
+VITE_API_URL=https://your-api-host.example.com/api
+VITE_USE_MOCK=false
+```
+
+Set these variables on the backend host:
+
+```env
+NODE_ENV=production
+DATABASE_URL=your-supabase-postgresql-connection-string
+FRONTEND_URLS=https://your-vercel-domain.vercel.app
+```
+
+`FRONTEND_URLS` accepts a comma-separated list when both a Vercel preview domain and a custom domain need access. The backend enables PostgreSQL TLS in production for Supabase connections. Do not expose `DATABASE_URL` or Supabase service-role credentials in Vercel `VITE_*` variables. Uploaded images currently use the backend's local `uploads` directory; use persistent storage or object storage if the backend host has an ephemeral filesystem.
+
 ## Run without PostgreSQL
 
 The frontend includes a mock API with sample hotel data. Create `frontend/.env` with:

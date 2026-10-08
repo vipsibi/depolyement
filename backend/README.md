@@ -19,3 +19,16 @@ npm run dev
 The API runs at `http://localhost:5000`. The `hotels` table and six starter hotels are created automatically on first start.
 
 The frontend expects the API at `http://localhost:5000/api`. Set `VITE_USE_MOCK=true` in the frontend environment only when practicing without PostgreSQL.
+
+## Production environment
+
+For a Supabase PostgreSQL database, configure the backend host with:
+
+```env
+NODE_ENV=production
+DB_SSL=true
+DATABASE_URL=your-supabase-postgresql-connection-string
+FRONTEND_URLS=https://your-vercel-domain.vercel.app
+```
+
+`FRONTEND_URLS` may contain multiple comma-separated frontend origins. The database pool uses TLS for Supabase, including when running locally. Keep `DATABASE_URL` server-side and never add it to frontend or `VITE_*` environment variables.

@@ -1,7 +1,15 @@
 import pg from 'pg';
 
 const { Pool } = pg;
-export const pool = new Pool({ connectionString: globalThis.process.env.DATABASE_URL });
+const databaseUrl = globalThis.process.env.DATABASE_URL || '';
+const useSsl = globalThis.process.env.DB_SSL === 'true'
+    || globalThis.process.env.NODE_ENV === 'production'
+    || databaseUrl.includes('.supabase.co');
+
+export const pool = new Pool({
+    connectionString: databaseUrl,
+    ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {}),
+});
 
 const seedHotels = [
     ['Palmwater Overwater Villas', 'A calm lagoon escape with clear water, private villas, and slow mornings beyond the city lights.', 11.0168, 76.9558, 2500, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', 'beach', 4.5, 120],

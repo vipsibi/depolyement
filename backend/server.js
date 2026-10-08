@@ -13,6 +13,10 @@ const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const uploadDir = path.join(currentDir, 'uploads');
 fs.mkdirSync(uploadDir, { recursive: true });
 const fields = 'id, name, description, latitude, longitude, price, image, location_type AS "locationType", rating, reviews, created_at';
+const allowedOrigins = String(globalThis.process.env.FRONTEND_URLS || 'http://localhost:5173')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 
 const upload = multer({
     storage: multer.diskStorage({
@@ -25,7 +29,12 @@ const upload = multer({
 
 
 
-app.use(cors());
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error('Origin is not allowed by CORS'));
+    },
+}));
 app.use(express.json());
 app.use('/uploads', express.static(uploadDir));
 
