@@ -8,6 +8,9 @@ const useSsl = globalThis.process.env.DB_SSL === 'true'
 
 export const pool = new Pool({
     connectionString: databaseUrl,
+    max: globalThis.process.env.VERCEL ? 1 : 10,
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
     ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {}),
 });
 

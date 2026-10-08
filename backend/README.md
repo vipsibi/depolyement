@@ -44,6 +44,8 @@ DATABASE_URL=your-supabase-postgresql-connection-string
 FRONTEND_URLS=https://your-frontend.vercel.app
 ```
 
+For Vercel serverless deployments, use the Supabase **Transaction pooler** connection string from the Supabase Connect dialog when available. It uses a hostname similar to `*.pooler.supabase.com` and port `6543`, which is designed for serverless workloads. The direct database hostname on port `5432` can fail from some serverless networks.
+
 The API health endpoint is:
 
 ```text
