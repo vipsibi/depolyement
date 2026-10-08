@@ -11,6 +11,8 @@ export const pool = new Pool({
     ...(useSsl ? { ssl: { rejectUnauthorized: false } } : {}),
 });
 
+
+
 const seedHotels = [
     ['Palmwater Overwater Villas', 'A calm lagoon escape with clear water, private villas, and slow mornings beyond the city lights.', 11.0168, 76.9558, 2500, 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800', 'beach', 4.5, 120],
     ['ERAMIKA Hilton City', 'A polished city base with quiet rooms, warm light, and everything close at hand.', 13.0827, 80.2707, 4000, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800', 'city', 4.6, 98],
